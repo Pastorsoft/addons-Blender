@@ -71,7 +71,7 @@ class VerticeSkin(bpy.types.Operator):
 
 def register():
 	bpy.utils.register_module(__name__)
-	bpy.types.WindowManager.vertice_func = BoolProperty(default=False)	
+	bpy.types.WindowManager.vertice_func = BoolProperty(default=True)	
 	bpy.types.WindowManager.Espejo = BoolProperty(default=True)
 	bpy.types.WindowManager.Dividir = BoolProperty(default=False)
 	bpy.types.WindowManager.CDivisiones = IntProperty(min = 1, max = 3 ,default = 1)
