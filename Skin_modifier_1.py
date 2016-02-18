@@ -23,12 +23,11 @@ class VerticeSkin(bpy.types.Panel):
 	bl_category = "Sculpt"
 	bl_context = "objectmode"
 	bl_label = "Skin Modifiers"
-
+	
 	def draw(self, context):
 		wm = context.window_manager
 		c = self.layout.column(align=True)
 		
-
 		c.operator("object.vertice")
 		box = c.column(align=True).box().column()
 		box.prop(wm,"Espejo","use mirror")
