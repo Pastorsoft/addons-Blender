@@ -2,7 +2,7 @@ bl_info = {
     "name": "Pie_Menus_Paint",
     "author": "Jose Ant. Garcia S",
     "version": (0, 0, 1),
-    "blender": (2, 77, 0),
+    "blender": (2, 78, 0),
     "description": "Custom Pie Menus",
     "category": "3D View",}
 
@@ -62,15 +62,17 @@ class PieSculpttres(Menu):
         col.operator("paint.brush_select", text="Fill", icon='BRUSH_TEXFILL').texture_paint_tool='FILL'
         col.operator("paint.brush_select", text='Smear', icon='BRUSH_SMEAR').texture_paint_tool='SMEAR'
         #8 - Top
-        ups = context.tool_settings.unified_paint_settings
-        brush = context.tool_settings.sculpt.brush
-        paintbrush = context.tool_settings.image_paint.brush
+        toolsettings = context.tool_settings
+        ups = toolsettings.unified_paint_settings
+        brush = toolsettings.sculpt.brush
+        paintbrush = toolsettings.image_paint.brush
         col = pie.column(align=True)
+        
+        col.template_color_picker(brush, "color", value_slider=True)
         col.prop(ups, "size", text="Radius", slider=False)
         col.prop(paintbrush, "strength", slider=True)
         col.prop(paintbrush, "color",text="")
         col.prop(paintbrush, "secondary_color", text="")
-
         # - Top Left
         box = pie.split().column()
         row = box.split(align=True)
