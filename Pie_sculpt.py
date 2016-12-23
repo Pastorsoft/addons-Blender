@@ -165,15 +165,12 @@ class PieSculpttres(Menu):
         wm = context.window_manager
         row.prop(wm, "flood_meshsculpt", "Flood Value")
 
-<<<<<<< HEAD
-=======
         box = pie.split().box().column()
         row = box.row(align=True)
         row.scale_x = 1.3
         row.prop(brush, "use_original_normal", toggle=True, icon_only=True)
         row.prop(brush, "sculpt_plane", text="")
 
->>>>>>> 77d2a3eee3d41907eda9297c7869ef11fc6ec63a
 addon_keymaps = []
 
 def register():
