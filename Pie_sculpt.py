@@ -2,6 +2,7 @@ bl_info = {
     "name": "Pinceles_Pie_Menus",
     "author": "Jose Ant. Garcia",
     "version": (0, 1, 0),
+    "blender": (2, 76, 0),
     "description": "Custom Pie Menus",
     "category": "3D View",}
 
