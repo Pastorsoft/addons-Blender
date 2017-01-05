@@ -1,13 +1,13 @@
 bl_info = {
     "name": "Pinceles_Pie_Menus",
     "author": "Jose Ant. Garcia",
-    "version": (0, 0, 2),
-    "blender": (2, 76, 0),
+    "version": (0, 0, 3),
     "description": "Custom Pie Menus",
     "category": "3D View",}
 
 import bpy
 from bpy.types import Menu
+
 
 
 class Espejo(bpy.types.Operator):
@@ -125,6 +125,7 @@ class PieSculpttres(Menu):
 
         row = box.row(align=False)
         row.scale_x=0.5
+
         if context.sculpt_object.use_dynamic_topology_sculpting:
             row.operator("sculpt.dynamic_topology_toggle", icon='X', text="Disable Dyntopo")
         else:
@@ -167,9 +168,21 @@ class PieSculpttres(Menu):
 
         box = pie.split().box().column()
         row = box.row(align=True)
+
+        ups = context.tool_settings.unified_paint_settings
+
         row.scale_x = 1.3
         row.prop(brush, "use_original_normal", toggle=True, icon_only=True)
         row.prop(brush, "sculpt_plane", text="")
+        row = box.row(align=True)
+        row.prop(ups, "size", text="Radius", slider=False)
+        row.scale_x = 1.3
+        row.prop(ups, "use_pressure_size", text="")
+        row = box.row(align=True)
+        row.prop(ups, "strength",  slider=False)
+        row.scale_x = 1.3
+        row.prop(ups, "use_pressure_strength", text="")
+
 
 addon_keymaps = []
 
