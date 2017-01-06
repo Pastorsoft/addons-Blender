@@ -10,7 +10,6 @@ import bpy
 from bpy.types import Menu
 
 
-
 class Espejo(bpy.types.Operator):
     bl_idname = "symetri.retopo"
     bl_label = "Symmetry"
@@ -23,8 +22,32 @@ class Espejo(bpy.types.Operator):
         bpy.ops.sculpt.dynamic_topology_toggle()
 
         return {'FINISHED'}
+class FloodFill(bpy.types.Operator):
+    ''' Dynto flood fill '''
+    bl_idname = "dynto.retopo"
+    bl_label = "Sculpt Dynto Flood"
+    bl_options = {'REGISTER', 'UNDO'}
 
+    def execute(self , context):
+        ob = bpy.context.active_object
+        wm = bpy.context.window_manager
+        
+        ob.select = True
 
+        bpy.ops.object.mode_set(mode='SCULPT')
+        bpy.ops.sculpt.dynamic_topology_toggle()
+        bpy.data.scenes[bpy.data.scenes[0].name].tool_settings.sculpt.constant_detail
+        bpy.ops.sculpt.detail_flood_fill()
+        bpy.ops.sculpt.dynamic_topology_toggle()
+        
+        md = context.active_object.modifiers.new('sculpttri', 'TRIANGULATE')
+        md.quad_method = "SHORTEST_DIAGONAL"
+        md.ngon_method = "BEAUTY"
+        # apply the modifier
+        bpy.ops.object.modifier_apply(apply_as='DATA',modifier="sculpttri")
+        ob.select = True
+
+        return {'FINISHED'}
 class PieSculptPie(Menu):
     bl_idname = "pie.pinceles"
     bl_label = "Brochas Sculpt"
@@ -164,8 +187,7 @@ class PieSculpttres(Menu):
 
         box = pie.split().box().column()
         row = box.row(align=True)
-        wm = context.window_manager
-        row.prop(wm, "flood_meshsculpt", "Flood Value")
+        row.prop(sculpt, "constant_detail", "Flood Value")
 
         box = pie.split().box().column()
         row = box.row(align=True)
@@ -191,8 +213,6 @@ def register():
     bpy.utils.register_module(__name__)
 
 
-
-
     wm = bpy.context.window_manager
 
     if wm.keyconfigs.addon:
@@ -206,7 +226,9 @@ def register():
         km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'W', 'PRESS', alt=True)
         kmi.properties.name = "pie.opciones"
-
+        
+        km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
+        kmi = km.keymap_items.new('dynto.retopo', 'EVT_TWEAK_R', 'NORTH',ctrl=True)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
