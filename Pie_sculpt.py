@@ -26,7 +26,6 @@ class FloodFill(bpy.types.Operator):
     ''' Dynto flood fill '''
     bl_idname = "dynto.retopo"
     bl_label = "Sculpt Dynto Flood"
-    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self , context):
         ob = bpy.context.active_object
@@ -132,7 +131,8 @@ class PieSculpttres(Menu):
         row.operator("brush.curve_preset", icon='SHARPCURVE', text="").shape = 'SHARP'
         row.operator("brush.curve_preset", icon='LINCURVE', text="").shape = 'LINE'
         row.operator("brush.curve_preset", icon='NOCURVE', text="").shape = 'MAX'
-        #2 - BOTTOM
+       # row.template_curve_mapping(brush, "curve", brush=True)
+       #2 - BOTTOM
         box = pie.split().box().column()
         row = box.split(align=True)
 
@@ -211,39 +211,31 @@ addon_keymaps = []
 
 def register():
     bpy.utils.register_module(__name__)
-
-
     wm = bpy.context.window_manager
-
+    
     if wm.keyconfigs.addon:
-
-
+    
         km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'W', 'PRESS')
         kmi.properties.name = "pie.pinceles"
-
-
+        
         km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'W', 'PRESS', alt=True)
         kmi.properties.name = "pie.opciones"
-        
+   
         km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
-        kmi = km.keymap_items.new('dynto.retopo', 'EVT_TWEAK_R', 'NORTH',ctrl=True)
+        kmi =km.keymap_items.new('dynto.retopo','EVT_TWEAK_R','NORTH',ctrl=True)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
-
-
-    wm = bpy.context.window_manager
-
+    wm =bpy.context.window_manager
     if wm.keyconfigs.addon:
         for km in addon_keymaps:
             for kmi in km.keymap_items:
                 km.keymap_items.remove(kmi)
-
+        
             wm.keyconfigs.addon.keymaps.remove(km)
-
-
+    
     del addon_keymaps[:]
 
 if __name__ == "__main__":
