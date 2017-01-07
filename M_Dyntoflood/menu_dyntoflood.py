@@ -19,10 +19,10 @@ class MenuDynto(bpy.types.Menu):
     bl_idname = "Menu_flotante"
 
     def draw(self, context):
-        wm = context.window_manager
+        sculpt = context.tool_settings.sculpt
         layout = self.layout
 
-        layout.prop(wm, "flood_meshsculpt", "Flood Value")
+        layout.prop(sculpt, "constant_detail", "Flood Value")
 
 
 
