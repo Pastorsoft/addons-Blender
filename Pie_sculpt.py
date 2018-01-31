@@ -1,38 +1,15 @@
 bl_info = {
     "name": "Pinceles_Pie_Menus",
     "author": "Jose Ant. Garcia",
-    "version": (0, 1, 4),
+    "version": (0, 1, 0),
+    "blender": (2, 76, 0),
     "description": "Custom Pie Menus",
     "category": "3D View",}
 
 import bpy
 from bpy.types import Menu
-from bpy.props import *
 
-class FloodOperator(bpy.types.Operator):
-    '''dynto flood fill a sculpt'''
-    bl_idname = "dynto.retopo"
-    bl_label = "Sculpt Dynto Flood"
-    bl_options = {'REGISTER', 'UNDO'}
 
-    @classmethod
-    def poll(cls, context):
-        return context.active_object is not None
-
-    def execute(self, context):
-        ob = context.active_object
-        wm = context.window_manager
-        oldMode = ob.mode
-
-        ob.select = True
-
-        bpy.ops.object.mode_set(mode='SCULPT')
-        bpy.ops.sculpt.dynamic_topology_toggle()
-        wm.flood_meshsculpt = bpy.data.scenes[bpy.data.scenes[0].name].tool_settings.sculpt.constant_detail_resolution
-        bpy.ops.sculpt.detail_flood_fill()
-        bpy.ops.sculpt.dynamic_topology_toggle()
-
-        return {'FINISHED'}
 
 class Espejo(bpy.types.Operator):
     bl_idname = "symetri.retopo"
@@ -46,31 +23,8 @@ class Espejo(bpy.types.Operator):
         bpy.ops.sculpt.dynamic_topology_toggle()
 
         return {'FINISHED'}
-class FloodFill(bpy.types.Operator):
-    ''' Dynto flood fill '''
-    bl_idname = "dynto.retopo"
-    bl_label = "Sculpt Dynto Flood"
 
-    def execute(self , context):
-        ob = bpy.context.active_object
-        wm = bpy.context.window_manager
-        
-        ob.select = True
 
-        bpy.ops.object.mode_set(mode='SCULPT')
-        bpy.ops.sculpt.dynamic_topology_toggle()
-        bpy.data.scenes[bpy.data.scenes[0].name].tool_settings.sculpt.constant_detail
-        bpy.ops.sculpt.detail_flood_fill()
-        bpy.ops.sculpt.dynamic_topology_toggle()
-        
-        md = context.active_object.modifiers.new('sculpttri', 'TRIANGULATE')
-        md.quad_method = "SHORTEST_DIAGONAL"
-        md.ngon_method = "BEAUTY"
-        # apply the modifier
-        bpy.ops.object.modifier_apply(apply_as='DATA',modifier="sculpttri")
-        ob.select = True
-
-        return {'FINISHED'}
 class PieSculptPie(Menu):
     bl_idname = "pie.pinceles"
     bl_label = "Brochas Sculpt"
@@ -155,12 +109,7 @@ class PieSculpttres(Menu):
         row.operator("brush.curve_preset", icon='SHARPCURVE', text="").shape = 'SHARP'
         row.operator("brush.curve_preset", icon='LINCURVE', text="").shape = 'LINE'
         row.operator("brush.curve_preset", icon='NOCURVE', text="").shape = 'MAX'
-<<<<<<< HEAD
-
-=======
-       # row.template_curve_mapping(brush, "curve", brush=True)
-       #2 - BOTTOM
->>>>>>> e0850bdd8b04c73e01856758b69ce94efeaee4fe
+        #2 - BOTTOM
         box = pie.split().box().column()
         row = box.split(align=True)
 
@@ -185,7 +134,7 @@ class PieSculpttres(Menu):
         row = box.row(align=True)
 
         if (sculpt.detail_type_method == 'CONSTANT'):
-            row.prop(sculpt, "constant_detail_resolution")
+            row.prop(sculpt, "constant_detail")
             row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
         else:
             row.prop(sculpt, "detail_size")
@@ -215,12 +164,8 @@ class PieSculpttres(Menu):
 
         box = pie.split().box().column()
         row = box.row(align=True)
-<<<<<<< HEAD
-        wm = context.scene.tool_settings.sculpt
-        row.prop(wm, "constant_detail_resolution", "Resolution")
-=======
-        row.prop(sculpt, "constant_detail", "Flood Value")
->>>>>>> e0850bdd8b04c73e01856758b69ce94efeaee4fe
+        wm = context.window_manager
+        row.prop(wm, "flood_meshsculpt", "Flood Value")
 
         box = pie.split().box().column()
         row = box.row(align=True)
@@ -244,40 +189,40 @@ addon_keymaps = []
 
 def register():
     bpy.utils.register_module(__name__)
-<<<<<<< HEAD
-
-    bpy.types.WindowManager.flood_meshsculpt = FloatProperty(min = 0.10, max = 100, default = 30)
 
 
-=======
->>>>>>> e0850bdd8b04c73e01856758b69ce94efeaee4fe
+
+
     wm = bpy.context.window_manager
-    
+
     if wm.keyconfigs.addon:
-    
+
+
         km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'W', 'PRESS')
         kmi.properties.name = "pie.pinceles"
-        
+
+
         km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'W', 'PRESS', alt=True)
         kmi.properties.name = "pie.opciones"
-   
-        km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
-        kmi =km.keymap_items.new('dynto.retopo','EVT_TWEAK_R','NORTH',ctrl=True)
+
 
 def unregister():
     bpy.utils.unregister_module(__name__)
-    wm =bpy.context.window_manager
+
+
+    wm = bpy.context.window_manager
+
     if wm.keyconfigs.addon:
         for km in addon_keymaps:
             for kmi in km.keymap_items:
                 km.keymap_items.remove(kmi)
-        
+
             wm.keyconfigs.addon.keymaps.remove(km)
-    
+
+
     del addon_keymaps[:]
 
 if __name__ == "__main__":
     register()
-
