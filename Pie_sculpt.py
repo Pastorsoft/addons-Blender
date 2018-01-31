@@ -1,14 +1,38 @@
 bl_info = {
     "name": "Pinceles_Pie_Menus",
     "author": "Jose Ant. Garcia",
-    "version": (0, 1, 0),
-    "blender": (2, 76, 0),
+    "version": (0, 1, 4),
     "description": "Custom Pie Menus",
     "category": "3D View",}
 
 import bpy
 from bpy.types import Menu
+from bpy.props import *
 
+class FloodOperator(bpy.types.Operator):
+    '''dynto flood fill a sculpt'''
+    bl_idname = "dynto.retopo"
+    bl_label = "Sculpt Dynto Flood"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object is not None
+
+    def execute(self, context):
+        ob = context.active_object
+        wm = context.window_manager
+        oldMode = ob.mode
+
+        ob.select = True
+
+        bpy.ops.object.mode_set(mode='SCULPT')
+        bpy.ops.sculpt.dynamic_topology_toggle()
+        wm.flood_meshsculpt = bpy.data.scenes[bpy.data.scenes[0].name].tool_settings.sculpt.constant_detail_resolution
+        bpy.ops.sculpt.detail_flood_fill()
+        bpy.ops.sculpt.dynamic_topology_toggle()
+
+        return {'FINISHED'}
 
 
 class Espejo(bpy.types.Operator):
@@ -109,7 +133,7 @@ class PieSculpttres(Menu):
         row.operator("brush.curve_preset", icon='SHARPCURVE', text="").shape = 'SHARP'
         row.operator("brush.curve_preset", icon='LINCURVE', text="").shape = 'LINE'
         row.operator("brush.curve_preset", icon='NOCURVE', text="").shape = 'MAX'
-        #2 - BOTTOM
+
         box = pie.split().box().column()
         row = box.split(align=True)
 
@@ -134,7 +158,7 @@ class PieSculpttres(Menu):
         row = box.row(align=True)
 
         if (sculpt.detail_type_method == 'CONSTANT'):
-            row.prop(sculpt, "constant_detail")
+            row.prop(sculpt, "constant_detail_resolution")
             row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
         else:
             row.prop(sculpt, "detail_size")
@@ -164,8 +188,8 @@ class PieSculpttres(Menu):
 
         box = pie.split().box().column()
         row = box.row(align=True)
-        wm = context.window_manager
-        row.prop(wm, "flood_meshsculpt", "Flood Value")
+        wm = context.scene.tool_settings.sculpt
+        row.prop(wm, "constant_detail_resolution", "Resolution")
 
         box = pie.split().box().column()
         row = box.row(align=True)
@@ -190,7 +214,7 @@ addon_keymaps = []
 def register():
     bpy.utils.register_module(__name__)
 
-
+    bpy.types.WindowManager.flood_meshsculpt = FloatProperty(min = 0.10, max = 100, default = 30)
 
 
     wm = bpy.context.window_manager
@@ -226,3 +250,4 @@ def unregister():
 
 if __name__ == "__main__":
     register()
+
